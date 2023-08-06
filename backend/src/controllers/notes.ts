@@ -37,6 +37,7 @@ interface CreateNoteBody {
   text?: string;
   from?: Date;
   to?: Date;
+  completed?: boolean;
 }
 
 export const createNote: RequestHandler<
@@ -45,7 +46,7 @@ export const createNote: RequestHandler<
   CreateNoteBody,
   unknown
 > = async (req, res, next) => {
-  const { title, text, from, to } = req.body;
+  const { title, text, from, to, completed } = req.body;
 
   try {
     if (!title) {
@@ -57,6 +58,7 @@ export const createNote: RequestHandler<
       text,
       from,
       to,
+      completed,
     });
     res.status(201).json(newNote);
   } catch (error) {
@@ -73,6 +75,7 @@ interface UpdateNoteBody {
   text?: string;
   from?: Date;
   to?: Date;
+  completed: boolean;
 }
 
 export const updateNote: RequestHandler<
@@ -82,7 +85,13 @@ export const updateNote: RequestHandler<
   unknown
 > = async (req, res, next) => {
   const { noteId } = req.params;
-  const { title: newTitle, text: newText, from: newFrom, to: newTo } = req.body;
+  const {
+    title: newTitle,
+    text: newText,
+    from: newFrom,
+    to: newTo,
+    completed: newCompleted,
+  } = req.body;
   try {
     if (!mongoose.isValidObjectId(noteId)) {
       throw createHttpError(400, "Invalid note id");
@@ -101,6 +110,7 @@ export const updateNote: RequestHandler<
     note.text = newText;
     note.from = newFrom;
     note.to = newTo;
+    note.completed = newCompleted;
 
     const updatedNote = await note.save();
     res.status(200).json(updatedNote);

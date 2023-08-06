@@ -6,6 +6,7 @@ const noteSchema = new Schema(
     text: { type: String },
     from: { type: Date },
     to: { type: Date },
+    completed: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
