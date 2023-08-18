@@ -1,15 +1,24 @@
 import React, { useMemo } from "react";
 import styles from "../styles/Note.module.css";
+import stylesUtils from "../styles/utils.module.css";
 import { Note as NoteModel } from "../models/note";
 import { Card } from "react-bootstrap";
 import { formatDate } from "../utils/formatDate";
+import { MdDelete } from "react-icons/md";
 
 interface NoteProps {
   note: NoteModel;
+  onNoteClicked: (note: NoteModel) => void;
+  onDeleteNoteClicked: (note: NoteModel) => void;
   className?: string;
 }
 
-export const Note = ({ note, className }: NoteProps) => {
+export const Note = ({
+  note,
+  onNoteClicked,
+  onDeleteNoteClicked,
+  className,
+}: NoteProps) => {
   const { title, text, from, to, createdAt, updatedAt } = note;
 
   const createdUpdatedText = useMemo(() => {
@@ -21,9 +30,21 @@ export const Note = ({ note, className }: NoteProps) => {
   }, [createdAt, updatedAt]);
 
   return (
-    <Card className={`${styles.noteCard} ${className}`}>
+    <Card
+      className={`${styles.noteCard} ${className}`}
+      onClick={() => onNoteClicked(note)}
+    >
       <Card.Body className={styles.cardBody}>
-        <Card.Title>{title}</Card.Title>
+        <Card.Title className={stylesUtils.flexCenter}>
+          {title}
+          <MdDelete
+            className="text-muted ms-auto"
+            onClick={(e) => {
+              onDeleteNoteClicked(note);
+              e.stopPropagation();
+            }}
+          />
+        </Card.Title>
         <Card.Text className={styles.noteText}>{text}</Card.Text>
         {from && (
           <Card.Text className={styles.noteText}>

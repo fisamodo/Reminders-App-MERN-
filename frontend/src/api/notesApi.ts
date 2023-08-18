@@ -21,8 +21,8 @@ export const fetchNotes = async (): Promise<Note[]> => {
 export interface NoteInput {
   title: string;
   text?: string;
-  from?: Date;
-  to?: Date;
+  from?: string;
+  to?: string;
 }
 export const createNote = async (note: NoteInput): Promise<Note> => {
   const response = await fetchData("/api/notes", {
@@ -33,4 +33,22 @@ export const createNote = async (note: NoteInput): Promise<Note> => {
     body: JSON.stringify(note),
   });
   return response.json();
+};
+
+export const updateNote = async (
+  noteId: string,
+  note: NoteInput
+): Promise<Note> => {
+  const response = await fetchData(`api/notes/${noteId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(note),
+  });
+  return response.json();
+};
+
+export const deleteNote = async (noteId: string): Promise<void> => {
+  await fetchData(`api/notes/${noteId}`, { method: "DELETE" });
 };
