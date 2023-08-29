@@ -3,6 +3,7 @@ import { Note } from "../models/note";
 import { useForm } from "react-hook-form";
 import { NoteInput } from "../api/notesApi";
 import * as NotesApi from "../api/notesApi";
+import { InputField } from "./form/InputField";
 
 interface AddEditNoteDialogProps {
   noteToEdit?: Note;
@@ -23,8 +24,6 @@ export const AddEditNoteDialog = ({
     defaultValues: {
       title: noteToEdit?.title,
       text: noteToEdit?.text,
-      /*from: new Date(noteToEdit?.from || "").toISOString().substring(0, 10),
-      to: new Date(noteToEdit?.to || "").toISOString().substring(0, 10),*/
       from: noteToEdit?.from
         ? new Date(noteToEdit?.from).toISOString().substring(0, 10)
         : "",
@@ -59,34 +58,40 @@ export const AddEditNoteDialog = ({
 
       <Modal.Body>
         <Form id="addEditNoteForm" onSubmit={handleSubmit(onSubmit)}>
-          <Form.Group className="mb-3">
-            <Form.Label>Title</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Title"
-              isInvalid={!!errors.title}
-              {...register("title", { required: "Required" })}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.title?.message}
-            </Form.Control.Feedback>
-          </Form.Group>
+          <InputField
+            name="title"
+            label="Title"
+            type="text"
+            placeholder="Title"
+            register={register}
+            registerOptions={{ required: "Required" }}
+            error={errors.title}
+          />
 
-          <Form.Group className="mb-3">
-            <Form.Label>Text</Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder="Text"
-              rows={4}
-              {...register("text")}
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>From</Form.Label>
-            <Form.Control type="date" {...register("from")} />
-            <Form.Label>To</Form.Label>
-            <Form.Control type="date" {...register("to")} />
-          </Form.Group>
+          <InputField
+            name="text"
+            label="Text"
+            as="textarea"
+            rows={4}
+            placeholder="Text"
+            register={register}
+            error={errors.title}
+          />
+
+          <InputField
+            name="from"
+            label="From"
+            type="date"
+            register={register}
+            error={errors.title}
+          />
+          <InputField
+            name="to"
+            label="To"
+            type="date"
+            register={register}
+            error={errors.title}
+          />
         </Form>
       </Modal.Body>
 
