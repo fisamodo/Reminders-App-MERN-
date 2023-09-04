@@ -44,7 +44,7 @@ export const NotesPageLoggedInView = () => {
   };
 
   const notesGrid = (
-    <Row xs={1} md={2} lg={3} className={`g-4 ${styles.noteGrid}`}>
+    <Row xs={1} md={2} lg={3} className={`g-4 ${styles.notesGrid}`}>
       {notes.map((note) => (
         <Col key={note._id}>
           <Note
@@ -61,7 +61,7 @@ export const NotesPageLoggedInView = () => {
   return (
     <>
       <Button
-        className={`mb-4 mt-4 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
+        className={`mb-4 ${styleUtils.blockCenter} ${styleUtils.flexCenter}`}
         onClick={() => setShowAddNoteDialog(true)}
       >
         <FaPlus />

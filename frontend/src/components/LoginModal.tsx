@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { User } from "../models/user";
 import { useForm } from "react-hook-form";
 import { LoginCredentials } from "../api/notesApi";
 import * as NotesApi from "../api/notesApi";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Alert, Button, Form, Modal } from "react-bootstrap";
 import { InputField } from "./form/InputField";
 import styleUtils from "../styles/utils.module.css";
+import { UnauthorizedError } from "../errors/http_errors";
 
 interface LoginModalProps {
   onDismiss: () => void;
@@ -15,6 +16,8 @@ export const LoginModal = ({
   onDismiss,
   onLoginSuccessful,
 }: LoginModalProps) => {
+  const [errorText, setErrorText] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -26,7 +29,11 @@ export const LoginModal = ({
       const user = await NotesApi.login(credentials);
       onLoginSuccessful(user);
     } catch (error) {
-      alert(error);
+      if (error instanceof UnauthorizedError) {
+        setErrorText(error.message);
+      } else {
+        alert(error);
+      }
       console.error(error);
     }
   };
@@ -37,6 +44,7 @@ export const LoginModal = ({
         <Modal.Title>Log in</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {errorText && <Alert variant="danger">{errorText}</Alert>}
         <Form onSubmit={handleSubmit(onSubmit)}>
           <InputField
             name="username"

@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { User } from "../models/user";
 import { useForm } from "react-hook-form";
 import { SignUpCredentials } from "../api/notesApi";
 import * as NotesApi from "../api/notesApi";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Alert, Button, Form, Modal } from "react-bootstrap";
 import { InputField } from "./form/InputField";
 import styleUtils from "../styles/utils.module.css";
+import { ConflictError } from "../errors/http_errors";
 
 interface SignUpModalProps {
   onDismiss: () => void;
@@ -15,6 +16,8 @@ export const SignUpModal = ({
   onDismiss,
   onSignUpSuccessful,
 }: SignUpModalProps) => {
+  const [errorText, setErrorText] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -26,7 +29,11 @@ export const SignUpModal = ({
       const newUser = await NotesApi.signUp(credentials);
       onSignUpSuccessful(newUser);
     } catch (error) {
-      alert(error);
+      if (error instanceof ConflictError) {
+        setErrorText(error.message);
+      } else {
+        alert(error);
+      }
       console.error(error);
     }
   };
@@ -34,6 +41,8 @@ export const SignUpModal = ({
     <Modal show onHide={onDismiss}>
       <Modal.Header closeButton>Sign up</Modal.Header>
       <Modal.Body>
+        {errorText && <Alert variant="danger">{errorText}</Alert>}
+
         <Form onSubmit={handleSubmit(onSubmit)}>
           <InputField
             name="username"
